@@ -18,6 +18,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.intercept.AuthorizationFilter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
@@ -52,24 +53,27 @@ public class SecurityConfiguration {
         http
                 .csrf(csrf -> csrf.disable())
                 // .cors(cors -> cors.disable())
-                .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.disable()))
+                // .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.disable()))
 //                .httpBasic(Customizer.withDefaults())
 //                .formLogin(Customizer.withDefaults())
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(authorize -> authorize
+                .logout(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(authorize -> {
+                    authorize
                         .requestMatchers(SWAGGER_WHITE_LIST).permitAll()
-                        .requestMatchers(H2_CONSOLE_WHITE_LIST).permitAll()
+                        .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers(AUTHENTICATION_WHITE_LIST).permitAll()
-                        .anyRequest().authenticated()
-                ).sessionManagement(sesssion -> sesssion.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                        .anyRequest().authenticated();
+                }
+                ).sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider(jpaUserDetailsService))
-                .addFilterBefore(jwtAuthRequestFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthRequestFilter, AuthorizationFilter.class);
         return http.build();
     }
 
     @Bean
-    public AuthenticationProvider authenticationProvider(JpaUserDetailsService jpaUserDetailsService) {
+    public DaoAuthenticationProvider authenticationProvider(JpaUserDetailsService jpaUserDetailsService) {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
         authenticationProvider.setUserDetailsService(jpaUserDetailsService);
         authenticationProvider.setPasswordEncoder(passwordEncoder());

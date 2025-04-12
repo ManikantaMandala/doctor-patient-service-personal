@@ -44,11 +44,10 @@ public class JpaUserDetailsService implements UserDetailsService {
     }
 
     private UserDetails toUserDetails(Person person) {
-        UserDetails userDetails = User.withUsername(person.getUserName())
+
+        return User.withUsername(person.getUserName())
                 .password(person.getPassword())
                 .roles(person.getRoles().split(","))
                 .build();
-
-        return userDetails;
     }
 }
