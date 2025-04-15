@@ -4,8 +4,6 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import org.hcltech.doctor_patient_appointment.dtos.authentication.AuthenticationResponseDto;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -17,7 +15,7 @@ import java.util.function.Function;
 public class JwtUtil {
 
 //    @Value("${jwtsecret}")
-    private String SECRET_KEY = "secret-key";
+    private String SECRET_KEY = "lK3Px+gkZ5fZV7tvNLV6GdfJQvJ4lw4EjPe4C8x+lK4=e";
 
     public String extractUsernameFromToken(String token) {
         return extractClaimFromToken(token, Claims::getSubject);
@@ -33,7 +31,11 @@ public class JwtUtil {
     }
 
     private Claims extractAllClaimFromToken(String token) {
-        return null;
+        return Jwts.parser()
+            .verifyWith(getSignKey())
+            .build()
+            .parseSignedClaims(token)
+            .getPayload();
     }
 
     private SecretKey getSignKey() {
@@ -52,7 +54,7 @@ public class JwtUtil {
 
     private String createToken(Map<String, Object> claims, String subject) {
         final long now = System.currentTimeMillis();
-        final long expireTime = now + 2 * 60 * 1_000;
+        final long expireTime = now + 2 * 60 * 60 * 1_000;
         return Jwts.builder()
                 .subject(subject)
                 .issuedAt(new Date(now))

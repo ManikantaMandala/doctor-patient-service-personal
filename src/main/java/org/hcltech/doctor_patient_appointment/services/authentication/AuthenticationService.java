@@ -41,8 +41,6 @@ public class AuthenticationService {
         );
 
         if (!authentication.isAuthenticated()) {
-            // TODO: controller advice?
-            // TODO: status code: not found
             throw new UsernameNotFoundException(authenticationRequestDto.getUsername() + " not found");
         }
 

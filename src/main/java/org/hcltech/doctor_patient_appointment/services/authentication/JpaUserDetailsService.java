@@ -30,9 +30,6 @@ public class JpaUserDetailsService implements UserDetailsService {
         Optional<Patient> patient = patientDaoService.getPatientByUsername(username);
 
         if(doctor.isEmpty() && patient.isEmpty()) {
-            // TODO: controller advice?
-            // TODO: custom exception?
-            // TODO: status code: not found
             throw new UsernameNotFoundException(username + "user not found");
         }
 

@@ -14,80 +14,90 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.intercept.AuthorizationFilter;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration {
 
-    private static final String[] SWAGGER_WHITE_LIST = {
-            "/swagger-ui.html",
-            "/swagger-ui/index.html",
-            "/swagger-ui/**",
-            "/swagger-resources/**",
-            "/v3/api-docs/**",
-            "/webjars/**"
-    };
+	private static final String[] SWAGGER_WHITE_LIST = {
+			"/swagger-ui.html",
+			"/swagger-ui/index.html",
+			"/swagger-ui/**",
+			"/swagger-resources/**",
+			"/v3/api-docs/**",
+			"/webjars/**"
+	};
 
-    private static final String[] H2_CONSOLE_WHITE_LIST = {
-            "/h2-console/**"
-    };
+	private static final String[] H2_CONSOLE_WHITE_LIST = {
+			"/h2-console/**"
+	};
 
-    private static final String[] AUTHENTICATION_WHITE_LIST = {
-            "/api/v1/auth/doctor/**",
-            "/api/v1/auth/doctor"
-    };
+	private static final String[] AUTHENTICATION_WHITE_LIST = {
+			"/api/v1/auth/doctor/**",
+			"/api/v1/auth/doctor",
+			"/api/v1/auth/patient/**",
+			"/api/v1/auth/patient",
+	};
 
-    @Autowired
-    private JwtAuthRequestFilter jwtAuthRequestFilter;
-    @Autowired
-    private JpaUserDetailsService jpaUserDetailsService;
+	private static final String[] PATIENT_WHITE_LIST = {
+			"/api/v1/patients/**",
+			"/api/v1/doctors/patient/**",
+	};
 
-    @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf(csrf -> csrf.disable())
-                // .cors(cors -> cors.disable())
-                // .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.disable()))
-//                .httpBasic(Customizer.withDefaults())
-//                .formLogin(Customizer.withDefaults())
-                .httpBasic(AbstractHttpConfigurer::disable)
-                .formLogin(AbstractHttpConfigurer::disable)
-                .logout(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(authorize -> {
-                    authorize
-                        .requestMatchers(SWAGGER_WHITE_LIST).permitAll()
-                        .requestMatchers("/h2-console/**").permitAll()
-                        .requestMatchers(AUTHENTICATION_WHITE_LIST).permitAll()
-                        .anyRequest().authenticated();
-                }
-                ).sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authenticationProvider(authenticationProvider(jpaUserDetailsService))
-                .addFilterBefore(jwtAuthRequestFilter, AuthorizationFilter.class);
-        return http.build();
-    }
+	private static final String[] DOCTOR_WHITE_LIST = {
+			"/api/v1/doctors/**",
+			"/api/v1/doctors",
+			"/api/v1/doctors/patients/**",
+	};
 
-    @Bean
-    public DaoAuthenticationProvider authenticationProvider(JpaUserDetailsService jpaUserDetailsService) {
-        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-        authenticationProvider.setUserDetailsService(jpaUserDetailsService);
-        authenticationProvider.setPasswordEncoder(passwordEncoder());
+	@Autowired
+	private JwtAuthRequestFilter jwtAuthRequestFilter;
+	@Autowired
+	private JpaUserDetailsService jpaUserDetailsService;
 
-        return authenticationProvider;
-    }
+	@Bean
+	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+		http
+				.csrf(csrf -> csrf.disable())
+				.cors(cors -> cors.disable())
+				.headers(headers -> headers.frameOptions(frameOptions -> frameOptions.disable()))
+				.httpBasic(Customizer.withDefaults())
+				.formLogin(Customizer.withDefaults())
+				.httpBasic(AbstractHttpConfigurer::disable)
+				.formLogin(AbstractHttpConfigurer::disable)
+				.logout(AbstractHttpConfigurer::disable)
+				.authorizeHttpRequests(authorize -> {
+					authorize
+							.requestMatchers(SWAGGER_WHITE_LIST).permitAll()
+							.requestMatchers("/h2-console/**").permitAll()
+							.requestMatchers(AUTHENTICATION_WHITE_LIST).hasAuthority("ROLE_ADMIN")
+							.anyRequest().authenticated();
+				}).sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+				.authenticationProvider(authenticationProvider(jpaUserDetailsService))
+				.addFilterBefore(jwtAuthRequestFilter, AuthorizationFilter.class);
+		return http.build();
+	}
 
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-        return config.getAuthenticationManager();
-    }
+	@Bean
+	public DaoAuthenticationProvider authenticationProvider(JpaUserDetailsService jpaUserDetailsService) {
+		DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
+		authenticationProvider.setUserDetailsService(jpaUserDetailsService);
+		authenticationProvider.setPasswordEncoder(passwordEncoder());
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return NoOpPasswordEncoder.getInstance();
-    }
+		return authenticationProvider;
+	}
+
+	@Bean
+	public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+		return config.getAuthenticationManager();
+	}
+
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+		return NoOpPasswordEncoder.getInstance();
+	}
 }

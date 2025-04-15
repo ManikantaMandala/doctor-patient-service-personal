@@ -1,5 +1,8 @@
 package org.hcltech.doctor_patient_appointment.daos.services;
 
+import org.hcltech.doctor_patient_appointment.exceptions.BodyNotFoundException;
+import org.hcltech.doctor_patient_appointment.exceptions.IdNotFoundException;
+import org.hcltech.doctor_patient_appointment.exceptions.RecordNotFoundInDbException;
 import org.hcltech.doctor_patient_appointment.models.Doctor;
 import org.hcltech.doctor_patient_appointment.repositories.DoctorRepository;
 import org.springframework.stereotype.Service;
@@ -18,10 +21,7 @@ public class DoctorDaoService {
 
     public Doctor getDoctorById(Long id) {
         if(id == null) {
-            // TODO: controller advice
-            // TODO: custom exception
-            // TODO: add status code: bad request
-            throw new RuntimeException("bad request, id is null");
+            throw new IdNotFoundException("bad request, id is null");
         }
 
         return doctorRepository.findById(id).orElse(null);
@@ -29,10 +29,7 @@ public class DoctorDaoService {
 
     public Doctor saveDoctor(Doctor doctor) {
         if(doctor == null) {
-            // TODO: controller advice
-            // TODO: custom exception
-            // TODO: add status code: bad request
-            throw new RuntimeException("bad request, body is null");
+            throw new BodyNotFoundException("bad request, body is null");
         }
 
         return doctorRepository.save(doctor);
@@ -44,10 +41,7 @@ public class DoctorDaoService {
 
     public Optional<Doctor> getAndUpdateById(Long id, Doctor doctor) {
         if(id == null) {
-            // TODO: controller advice
-            // TODO: custom exception
-            // TODO: add status code: bad request
-            throw new RuntimeException("bad request, id is null");
+            throw new IdNotFoundException("bad request, id is null");
         }
 
         return doctorRepository.findById(id).map(d -> {
@@ -61,18 +55,12 @@ public class DoctorDaoService {
 
     public void deleteDoctor(Long id) {
         if(id == null) {
-            // TODO: controller advice
-            // TODO: custom exception
-            // TODO: add status code: bad request
-            throw new RuntimeException("bad request, id is null");
+            throw new IdNotFoundException("bad request, id is null");
         }
         Optional<Doctor> doctor = doctorRepository.findById(id);
 
         if(doctor.isEmpty()) {
-            // TODO: controller advice
-            // TODO: custom exception
-            // TODO: add status code: not found
-            throw new RuntimeException("doctor, not found");
+            throw new RecordNotFoundInDbException("doctor record, not found");
         }
 
         doctorRepository.deleteById(id);
