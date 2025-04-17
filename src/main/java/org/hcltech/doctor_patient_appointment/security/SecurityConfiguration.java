@@ -38,9 +38,7 @@ public class SecurityConfiguration {
 
 	private static final String[] AUTHENTICATION_WHITE_LIST = {
 			"/api/v1/auth/doctor/**",
-			"/api/v1/auth/doctor",
 			"/api/v1/auth/patient/**",
-			"/api/v1/auth/patient",
 	};
 
 	private static final String[] PATIENT_WHITE_LIST = {
@@ -73,8 +71,10 @@ public class SecurityConfiguration {
 				.authorizeHttpRequests(authorize -> {
 					authorize
 							.requestMatchers(SWAGGER_WHITE_LIST).permitAll()
-							.requestMatchers("/h2-console/**").permitAll()
-							.requestMatchers(AUTHENTICATION_WHITE_LIST).hasAuthority("ROLE_ADMIN")
+							.requestMatchers(H2_CONSOLE_WHITE_LIST).permitAll()
+							.requestMatchers(AUTHENTICATION_WHITE_LIST).permitAll()
+							.requestMatchers(PATIENT_WHITE_LIST).hasRole("DOCTOR")
+							.requestMatchers(DOCTOR_WHITE_LIST).hasRole("DOCTOR")
 							.anyRequest().authenticated();
 				}).sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authenticationProvider(authenticationProvider(jpaUserDetailsService))

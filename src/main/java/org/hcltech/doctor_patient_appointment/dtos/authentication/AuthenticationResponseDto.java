@@ -11,7 +11,6 @@ import java.util.Date;
 @AllArgsConstructor
 public class AuthenticationResponseDto {
     String accessToken;
-//    String tokenType;
     Date expiresIn;
     String principle;
 }

@@ -10,34 +10,26 @@ import org.hcltech.doctor_patient_appointment.enums.Gender;
 @ToString(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class Patient extends Person {
+public class Patient extends Users {
+	@Column(nullable = false)
+	private String firstName;
 
-    @Column(nullable = false, unique = true)
-    private String email;
+	@Column(nullable = false)
+	private String lastName;
 
-    @Column(nullable = false)
-    private String firstName;
+	@Column(nullable = false)
+	private Integer age;
 
-    @Column(nullable = false)
-    private String lastName;
+	@Column(nullable = false)
+	private Gender gender;
 
-    @Column(nullable = false)
-    private Integer age;
+	@Column(nullable = false)
+	private String phoneNumber;
 
-    @Column(nullable = false)
-    private Gender gender;
+	@Column(nullable = false)
+	private String address;
 
-    @Column(nullable = false)
-    private String phoneNumber;
-
-    @Column(nullable = false)
-    private String address;
-
-    @ManyToOne
-    @JoinColumn(name = "fk_appointment_doctor", referencedColumnName = "id")
-    private Doctor doctor;
-
-//    private List<Appointment> appointments;
-
-//    private List<Prescription> prescriptions;
+	@ManyToOne
+	@JoinColumn(name = "fk_appointment_doctor", referencedColumnName = "id")
+	private Doctor doctor;
 }

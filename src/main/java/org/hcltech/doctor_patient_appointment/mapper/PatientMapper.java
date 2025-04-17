@@ -31,8 +31,8 @@ public class PatientMapper {
         patientDto.setId(patient.getId());
         patientDto.setFirstName(patient.getFirstName());
         patientDto.setLastName(patient.getLastName());
-        patientDto.setUsername(patient.getUserName());
-        patientDto.setEmail(patient.getEmail());
+        patientDto.setUsername(patient.getUser().getUserName());
+        patientDto.setEmail(patient.getUser().getEmail());
         patientDto.setPhoneNumber(patient.getPhoneNumber());
         patientDto.setGender(patient.getGender());
         patientDto.setAddress(patient.getAddress());
@@ -46,9 +46,9 @@ public class PatientMapper {
 
         patient.setFirstName(patientDto.getFirstName());
         patient.setLastName(patientDto.getLastName());
-        patient.setUserName(patientDto.getUsername());
-        patient.setPassword(patientDto.getPassword());
-        patient.setEmail(patientDto.getEmail());
+        patient.getUser().setUserName(patientDto.getUsername());
+        patient.getUser().setPassword(patientDto.getPassword());
+        patient.getUser().setEmail(patientDto.getEmail());
         patient.setPhoneNumber(patientDto.getPhoneNumber());
         patient.setGender(patientDto.getGender());
         patient.setAddress(patientDto.getAddress());

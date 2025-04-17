@@ -6,13 +6,9 @@ import java.util.List;
 import org.hcltech.doctor_patient_appointment.dtos.doctor.DoctorDto;
 import org.hcltech.doctor_patient_appointment.dtos.doctor.PatientDoctorDto;
 import org.hcltech.doctor_patient_appointment.dtos.patient.DoctorPatientDto;
-import org.hcltech.doctor_patient_appointment.dtos.patient.PatientDto;
-import org.hcltech.doctor_patient_appointment.enums.Gender;
 import org.hcltech.doctor_patient_appointment.models.Doctor;
 import org.hcltech.doctor_patient_appointment.models.Patient;
 import org.springframework.stereotype.Service;
-
-import jakarta.persistence.Column;
 
 @Service
 public class DoctorMapper {
@@ -27,14 +23,14 @@ public class DoctorMapper {
 		DoctorDto doctorDto = new DoctorDto();
 
 		doctorDto.setId(doctor.getId());
-		doctorDto.setEmail(doctor.getEmail());
+		doctorDto.setEmail(doctor.getUser().getEmail());
 		doctorDto.setName(doctor.getName());
 		doctorDto.setGender(doctor.getGender());
 		doctorDto.setSpecialization(doctor.getSpecialization());
 		doctorDto.setPhoneNumber(doctor.getPhoneNumber());
 		doctorDto.setAddress(doctor.getAddress());
-		doctorDto.setUsername(doctor.getUserName());
-		doctorDto.setRoles(doctor.getRoles());
+		doctorDto.setUsername(doctor.getUser().getUserName());
+		doctorDto.setRoles(doctor.getUser().getRoles());
 
 		if (doctor.getPatients() == null) {
 			doctor.setPatients(new ArrayList<>());
@@ -55,8 +51,8 @@ public class DoctorMapper {
 		patientDoctorDto.setName(doctor.getName());
 		patientDoctorDto.setGender(doctor.getGender());
 		patientDoctorDto.setSpecialization(doctor.getSpecialization());
-		patientDoctorDto.setEmail(doctor.getEmail());
-		patientDoctorDto.setUsername(doctor.getUserName());
+		patientDoctorDto.setEmail(doctor.getUser().getEmail());
+		patientDoctorDto.setUsername(doctor.getUser().getUserName());
 		patientDoctorDto.setAddress(doctor.getAddress());
 		patientDoctorDto.setPhoneNumber(doctor.getPhoneNumber());
 		patientDoctorDto.setAvailable(doctor.getPatients().size() < 4);
@@ -67,15 +63,15 @@ public class DoctorMapper {
 	public Doctor toEntity(DoctorDto doctorDto) {
 		Doctor doctor = new Doctor();
 
-		doctor.setUserName(doctorDto.getUsername());
-		doctor.setEmail(doctorDto.getEmail());
+		doctor.getUser().setUserName(doctorDto.getUsername());
+		doctor.getUser().setEmail(doctorDto.getEmail());
 		doctor.setName(doctorDto.getName());
 		doctor.setAddress(doctorDto.getAddress());
 		doctor.setGender(doctorDto.getGender());
 		doctor.setSpecialization(doctorDto.getSpecialization());
 		doctor.setPhoneNumber(doctorDto.getPhoneNumber());
-		doctor.setPassword(doctorDto.getPassword());
-		doctor.setRoles(doctorDto.getRoles() == null ? "DOCTOR" : doctorDto.getRoles());
+		doctor.getUser().setPassword(doctorDto.getPassword());
+		doctor.getUser().setRoles(doctorDto.getRoles() == null ? "DOCTOR" : doctorDto.getRoles());
 
 		return doctor;
 	}
@@ -86,15 +82,14 @@ public class DoctorMapper {
 		doctorPatientDto.setId(patient.getId());
 		doctorPatientDto.setFirstName(patient.getFirstName());
 		doctorPatientDto.setLastName(patient.getLastName());
-		doctorPatientDto.setUsername(patient.getUserName());
-		doctorPatientDto.setEmail(patient.getEmail());
+		doctorPatientDto.setUsername(patient.getUser().getUserName());
+		doctorPatientDto.setEmail(patient.getUser().getEmail());
 		doctorPatientDto.setPhoneNumber(patient.getPhoneNumber());
 		doctorPatientDto.setGender(patient.getGender());
 		doctorPatientDto.setAddress(patient.getAddress());
 		doctorPatientDto.setAge(patient.getAge());
 
 		return doctorPatientDto;
-
 	}
 
 }

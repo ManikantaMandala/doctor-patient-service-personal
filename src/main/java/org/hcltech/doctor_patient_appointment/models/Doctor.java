@@ -1,9 +1,10 @@
 package org.hcltech.doctor_patient_appointment.models;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
 import lombok.*;
 import org.hcltech.doctor_patient_appointment.enums.Gender;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import java.util.List;
 
@@ -13,28 +14,23 @@ import java.util.List;
 @ToString(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class Doctor extends Person {
-    @Email
-    @Column(nullable = false, unique = true)
-    private String email;
+public class Doctor extends Users {
+	@Column(nullable = false)
+	private String name;
 
-    @Column(nullable = false)
-    private String name;
+	@Column(nullable = false)
+	private Gender gender;
 
-    @Column(nullable = false)
-    private Gender gender;
+	@Column(nullable = false)
+	private String specialization;
 
-    @Column(nullable = false)
-    private String specialization;
+	@Column(nullable = false)
+	private String phoneNumber;
 
-    @Column(nullable = false)
-    private String phoneNumber;
+	@Column(nullable = false)
+	private String address;
 
-    @Column(nullable = false)
-    private String address;
-
-    @OneToMany(mappedBy = "doctor", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
-    private List<Patient> patients;
-
-//    private List<Appointment> appointments;
+	@OneToMany(mappedBy = "doctor", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@Fetch(value = FetchMode.SUBSELECT)
+	private List<Patient> patients;
 }

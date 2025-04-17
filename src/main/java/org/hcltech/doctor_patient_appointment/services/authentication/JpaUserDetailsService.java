@@ -4,7 +4,7 @@ import org.hcltech.doctor_patient_appointment.daos.services.DoctorDaoService;
 import org.hcltech.doctor_patient_appointment.daos.services.PatientDaoService;
 import org.hcltech.doctor_patient_appointment.models.Doctor;
 import org.hcltech.doctor_patient_appointment.models.Patient;
-import org.hcltech.doctor_patient_appointment.models.Person;
+import org.hcltech.doctor_patient_appointment.models.Users;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -29,18 +29,21 @@ public class JpaUserDetailsService implements UserDetailsService {
         Optional<Doctor> doctor = doctorDaoService.getDoctorByUsername(username);
         Optional<Patient> patient = patientDaoService.getPatientByUsername(username);
 
-        if(doctor.isEmpty() && patient.isEmpty()) {
+        // System.out.println(doctor);
+        // System.out.println(patient);
+
+        if (doctor.isEmpty() && patient.isEmpty()) {
             throw new UsernameNotFoundException(username + "user not found");
         }
 
         if (doctor.isEmpty()) {
-            return toUserDetails(patient.get());
+            return toUserDetails(patient.get().getUser());
         }
 
-        return toUserDetails(doctor.get());
+        return toUserDetails(doctor.get().getUser());
     }
 
-    private UserDetails toUserDetails(Person person) {
+    private UserDetails toUserDetails(Users person) {
 
         return User.withUsername(person.getUserName())
                 .password(person.getPassword())

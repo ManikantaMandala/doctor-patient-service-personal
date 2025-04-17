@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
 
 @Getter
@@ -12,6 +13,9 @@ import lombok.AllArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AuthenticationRequestDto {
-    String username;
-    String password;
+    private String username;
+    private String password;
+    @Email
+    private String email;
+    private String roles;
 }

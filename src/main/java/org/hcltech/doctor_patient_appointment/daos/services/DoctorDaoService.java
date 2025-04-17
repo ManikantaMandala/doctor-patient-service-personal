@@ -20,7 +20,7 @@ public class DoctorDaoService {
     }
 
     public Doctor getDoctorById(Long id) {
-        if(id == null) {
+        if (id == null) {
             throw new IdNotFoundException("bad request, id is null");
         }
 
@@ -28,7 +28,7 @@ public class DoctorDaoService {
     }
 
     public Doctor saveDoctor(Doctor doctor) {
-        if(doctor == null) {
+        if (doctor == null) {
             throw new BodyNotFoundException("bad request, body is null");
         }
 
@@ -40,7 +40,7 @@ public class DoctorDaoService {
     }
 
     public Optional<Doctor> getAndUpdateById(Long id, Doctor doctor) {
-        if(id == null) {
+        if (id == null) {
             throw new IdNotFoundException("bad request, id is null");
         }
 
@@ -54,12 +54,12 @@ public class DoctorDaoService {
     }
 
     public void deleteDoctor(Long id) {
-        if(id == null) {
+        if (id == null) {
             throw new IdNotFoundException("bad request, id is null");
         }
         Optional<Doctor> doctor = doctorRepository.findById(id);
 
-        if(doctor.isEmpty()) {
+        if (doctor.isEmpty()) {
             throw new RecordNotFoundInDbException("doctor record, not found");
         }
 

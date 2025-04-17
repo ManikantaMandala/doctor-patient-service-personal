@@ -29,7 +29,6 @@ public class DoctorController {
 	 * @param Long id
 	 *
 	 * @return DoctorDto doctor
-	 * TODO: add the null cases and exception cases
 	 */
     @PreAuthorize("hasRole('ROLE_PATIENT', 'ROLE_ADMIN', 'ROLE_DOCTOR')")
     @GetMapping
@@ -46,7 +45,6 @@ public class DoctorController {
 	 * @param Long id
 	 *
 	 * @return DoctorDto doctor
-	 * TODO: add the null cases and exception cases
 	 */
     @PreAuthorize("hasRole('ROLE_DOCTOR', 'ROLE_ADMIN')")
     @GetMapping("/{doctorId}")
@@ -62,7 +60,6 @@ public class DoctorController {
 	 * @param Long id
 	 *
 	 * @return List<DoctorPatientDto> patients
-	 * TODO: add the null cases and exception cases
 	 */
     @PreAuthorize("hasRole('ROLE_DOCTOR', 'ROLE_ADMIN')")
     @GetMapping("/patients/{doctorId}")
@@ -81,9 +78,9 @@ public class DoctorController {
 	 * @param Long id
 	 * @param DoctorDto doctor
 	 *
-	 * TODO: add the null cases and exception cases
+	 * TODO: add the null cases and exception cases in the documentation
 	 */
-    @PreAuthorize("hasRole('ROLE_DOCTOR')")
+    @PreAuthorize("hasRole('ROLE_DOCTOR', 'ROLE_ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<String> updateDoctorDetails(@PathVariable Long id, @RequestBody DoctorDto doctorDto) {
         doctorService.updateDoctorDetails(id, doctorDto);
