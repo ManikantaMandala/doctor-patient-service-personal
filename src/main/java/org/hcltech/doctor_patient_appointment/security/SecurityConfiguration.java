@@ -72,8 +72,8 @@ public class SecurityConfiguration {
 							.requestMatchers(SWAGGER_WHITE_LIST).permitAll()
 							.requestMatchers(H2_CONSOLE_WHITE_LIST).permitAll()
 							.requestMatchers(AUTHENTICATION_WHITE_LIST).permitAll()
-							.requestMatchers(PATIENT_WHITE_LIST).hasRole("DOCTOR")
-							.requestMatchers(DOCTOR_WHITE_LIST).hasRole("DOCTOR")
+							// .requestMatchers(PATIENT_WHITE_LIST).hasRole("DOCTOR")
+							// .requestMatchers(DOCTOR_WHITE_LIST).hasRole("DOCTOR")
 							.anyRequest().authenticated();
 				}).sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.exceptionHandling(ex -> ex
