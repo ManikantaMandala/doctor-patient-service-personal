@@ -37,17 +37,17 @@ public class JpaUserDetailsService implements UserDetailsService {
         }
 
         if (doctor.isEmpty()) {
-            return toUserDetails(patient.get().getUser());
+            return toUserDetails(patient.get());
         }
 
-        return toUserDetails(doctor.get().getUser());
+        return toUserDetails(doctor.get());
     }
 
     private UserDetails toUserDetails(Users person) {
 
         return User.withUsername(person.getUserName())
                 .password(person.getPassword())
-                .roles(person.getRoles().split(","))
+                .roles(person.getRoles().toArray(new String[0]))
                 .build();
     }
 }

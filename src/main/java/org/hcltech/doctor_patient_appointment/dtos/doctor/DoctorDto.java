@@ -1,10 +1,10 @@
 package org.hcltech.doctor_patient_appointment.dtos.doctor;
 
 import lombok.*;
-import org.hcltech.doctor_patient_appointment.dtos.patient.PatientDto;
 import org.hcltech.doctor_patient_appointment.enums.Gender;
 
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -21,6 +21,6 @@ public class DoctorDto {
 	private String specialization;
 	private String phoneNumber;
 	private String address;
-	private String roles;
+	private Set<String> roles;
 	private List<Long> patientDtos;
 }

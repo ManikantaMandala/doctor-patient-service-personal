@@ -4,7 +4,6 @@ import org.hcltech.doctor_patient_appointment.daos.services.PatientDaoService;
 import org.hcltech.doctor_patient_appointment.dtos.patient.CreatePatientDto;
 import org.hcltech.doctor_patient_appointment.dtos.patient.PatientDto;
 import org.hcltech.doctor_patient_appointment.dtos.patient.UpdatePatientDto;
-import org.hcltech.doctor_patient_appointment.enums.Gender;
 import org.hcltech.doctor_patient_appointment.models.Patient;
 import org.springframework.stereotype.Service;
 
@@ -31,8 +30,8 @@ public class PatientMapper {
         patientDto.setId(patient.getId());
         patientDto.setFirstName(patient.getFirstName());
         patientDto.setLastName(patient.getLastName());
-        patientDto.setUsername(patient.getUser().getUserName());
-        patientDto.setEmail(patient.getUser().getEmail());
+        patientDto.setUsername(patient.getUserName());
+        patientDto.setEmail(patient.getEmail());
         patientDto.setPhoneNumber(patient.getPhoneNumber());
         patientDto.setGender(patient.getGender());
         patientDto.setAddress(patient.getAddress());
@@ -46,9 +45,9 @@ public class PatientMapper {
 
         patient.setFirstName(patientDto.getFirstName());
         patient.setLastName(patientDto.getLastName());
-        patient.getUser().setUserName(patientDto.getUsername());
-        patient.getUser().setPassword(patientDto.getPassword());
-        patient.getUser().setEmail(patientDto.getEmail());
+        patient.setUserName(patientDto.getUsername());
+        patient.setPassword(patientDto.getPassword());
+        patient.setEmail(patientDto.getEmail());
         patient.setPhoneNumber(patientDto.getPhoneNumber());
         patient.setGender(patientDto.getGender());
         patient.setAddress(patientDto.getAddress());

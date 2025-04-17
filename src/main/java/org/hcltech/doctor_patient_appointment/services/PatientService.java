@@ -1,5 +1,6 @@
 package org.hcltech.doctor_patient_appointment.services;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -12,16 +13,16 @@ import org.hcltech.doctor_patient_appointment.exceptions.DifferentUserShouldBeSa
 import org.hcltech.doctor_patient_appointment.exceptions.DoctorCanNotHaveMorePatientsException;
 import org.hcltech.doctor_patient_appointment.exceptions.DoctorNotAssignedToPatientException;
 import org.hcltech.doctor_patient_appointment.exceptions.DoctorShouldBeAllocatedToPatientException;
-import org.hcltech.doctor_patient_appointment.exceptions.EmailShouldBeUniqueException;
 import org.hcltech.doctor_patient_appointment.exceptions.EntryShouldBeUniqueException;
+import org.hcltech.doctor_patient_appointment.exceptions.IdNotFoundException;
 import org.hcltech.doctor_patient_appointment.exceptions.PatientIdNotMatchingWithPatientUserName;
 import org.hcltech.doctor_patient_appointment.exceptions.PatientNotFoundUsingUserNameException;
-import org.hcltech.doctor_patient_appointment.exceptions.PatientUsernameShouldMatchWithTheId;
+import org.hcltech.doctor_patient_appointment.exceptions.PatientUsernameShouldMatchWithTheIdException;
 import org.hcltech.doctor_patient_appointment.exceptions.RecordNotFoundInDbException;
-import org.hcltech.doctor_patient_appointment.exceptions.UsernameShouldBeUniqueException;
 import org.hcltech.doctor_patient_appointment.mapper.PatientMapper;
 import org.hcltech.doctor_patient_appointment.models.Doctor;
 import org.hcltech.doctor_patient_appointment.models.Patient;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import jakarta.validation.Valid;
@@ -44,13 +45,17 @@ public class PatientService {
 		Patient patient = patientMapper.toEntityFromCreatePatientDto(createPatientDto);
 
 		if (checkUsernameIfExists(patient.getUserName())) {
-			throw new UsernameShouldBeUniqueException("username should be unique");
+			throw new EntryShouldBeUniqueException("username should be unique");
 		}
 		if (checkEmailIfExists(patient.getEmail())) {
-			throw new EmailShouldBeUniqueException("email should be unique");
+			throw new EntryShouldBeUniqueException("email should be unique");
 		}
 		Patient createdPatient = patientDaoService.savePatient(patient);
 		return patientMapper.toDto(createdPatient);
+	}
+
+	public List<PatientDto> getPatients() {
+		return patientDaoService.get().stream().map(patientMapper::toDto).toList();
 	}
 
 	private boolean checkEmailIfExists(String email) {
@@ -68,7 +73,14 @@ public class PatientService {
 	}
 
 	public void deletePatient(Long id) {
+		if(id == null) {
+			throw new IdNotFoundException("id not found");
+		}
 		patientDaoService.deleteById(id);
+	}
+
+	public void deletePatient(Long id, String userName) {
+		patientDaoService.deleteById(id, userName);
 	}
 
 	public void allocatePatientToDoctor(Long doctorId, Long patientId) {
@@ -130,7 +142,7 @@ public class PatientService {
 			throw new RecordNotFoundInDbException("patient not found");
 		}
 
-		if (patientById.getUser().getUserName() != username) {
+		if (!Objects.equals(patientById.getUserName(),username)) {
 			throw new DifferentUserShouldBeSameException("bad request, different user");
 		}
 
@@ -157,10 +169,10 @@ public class PatientService {
 
 		Patient patientById = patientDaoService.getPatientById(id);
 
-		if (checkUsernameIfExists(patient.getUser().getUserName(), patientById)) {
+		if (checkUsernameIfExists(patient.getUserName(), patientById)) {
 			throw new EntryShouldBeUniqueException("username should be unique");
 		}
-		if (checkEmailIfExists(patient.getUser().getEmail(), patientById)) {
+		if (checkEmailIfExists(patient.getEmail(), patientById)) {
 			throw new EntryShouldBeUniqueException("email should be unique");
 		}
 		if (!checkSameDoctorForPatient(patientById, doctorId)) {
@@ -173,14 +185,14 @@ public class PatientService {
 	}
 
 	private boolean checkEmailIfExists(String email, Patient patient) {
-		if (!Objects.equals(patient.getUser().getEmail(), email)) {
+		if (!Objects.equals(patient.getEmail(), email)) {
 			return false;
 		}
 		return true;
 	}
 
 	private boolean checkUsernameIfExists(String username, Patient patient) {
-		if (!Objects.equals(patient.getUser().getUserName(), username)) {
+		if (!Objects.equals(patient.getUserName(), username)) {
 			return false;
 		}
 		return true;
@@ -194,7 +206,7 @@ public class PatientService {
 	}
 
 	private boolean checkSamePatient(Patient patient, String userName) {
-		if (!Objects.equals(patient.getDoctor().getUser().getUserName(), userName)) {
+		if (!Objects.equals(patient.getDoctor().getUserName(), userName)) {
 			return false;
 		}
 		return true;
@@ -206,14 +218,14 @@ public class PatientService {
 
 		Patient patientById = patientDaoService.getPatientById(id);
 
-		if (checkUsernameIfExists(patient.getUser().getUserName(), patientById)) {
+		if (checkUsernameIfExists(patient.getUserName(), patientById)) {
 			throw new EntryShouldBeUniqueException("username should be unique");
 		}
-		if (checkEmailIfExists(patient.getUser().getEmail(), patientById)) {
+		if (checkEmailIfExists(patient.getEmail(), patientById)) {
 			throw new EntryShouldBeUniqueException("email should be unique");
 		}
 		if (!checkSamePatient(patientById, patientUserName)) {
-			throw new PatientUsernameShouldMatchWithTheId(
+			throw new PatientUsernameShouldMatchWithTheIdException(
 					"doctor should be allocated to update the patient details");
 		}
 
@@ -247,7 +259,6 @@ public class PatientService {
 		}
 
 		patient.setDoctor(doctor);
-
 		patientDaoService.savePatient(patient);
 	}
 

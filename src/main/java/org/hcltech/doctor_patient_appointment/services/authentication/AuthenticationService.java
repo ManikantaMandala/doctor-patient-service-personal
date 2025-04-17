@@ -1,6 +1,5 @@
 package org.hcltech.doctor_patient_appointment.services.authentication;
 
-import org.hcltech.doctor_patient_appointment.daos.services.DoctorDaoService;
 import org.hcltech.doctor_patient_appointment.dtos.authentication.AuthenticationRequestDto;
 import org.hcltech.doctor_patient_appointment.dtos.authentication.AuthenticationResponseDto;
 import org.hcltech.doctor_patient_appointment.utils.JwtUtil;
@@ -12,7 +11,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
-import java.util.List;
 
 @Service
 public class AuthenticationService {

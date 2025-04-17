@@ -1,5 +1,6 @@
 package org.hcltech.doctor_patient_appointment.models;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import jakarta.persistence.Column;
@@ -35,5 +36,5 @@ public abstract class Users extends BaseModel {
 
     @Column(nullable = false)
 	@ElementCollection(fetch = FetchType.EAGER)
-    private Set<String> roles;
+    private Set<String> roles = new HashSet<>();
 }

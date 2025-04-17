@@ -1,5 +1,7 @@
 package org.hcltech.doctor_patient_appointment.controllers;
 
+import java.util.List;
+
 import org.hcltech.doctor_patient_appointment.dtos.patient.PatientDto;
 import org.hcltech.doctor_patient_appointment.dtos.patient.UpdatePatientDto;
 import org.hcltech.doctor_patient_appointment.services.PatientService;
@@ -9,6 +11,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,6 +29,14 @@ public class PatientController {
 		this.patientService = patientService;
 	}
 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@GetMapping
+	public ResponseEntity<List<PatientDto>> getPatients() {
+		List<PatientDto> patients = patientService.getPatients();
+
+		return ResponseEntity.ok(patients);
+	}
+
 	/**
 	 * get patient details by id
 	 *
@@ -33,19 +44,10 @@ public class PatientController {
 	 *
 	 * @return PatientDto patientDto
 	 */
-	@PreAuthorize("hasRole('ROLE_ADMIN', 'ROLE_DOCTOR')")
+	@PreAuthorize("hasRole('ROLE_ADMIN', 'ROLE_DOCTOR', 'ROLE_PATIENT')")
 	@GetMapping("/{id}")
 	public ResponseEntity<PatientDto> getPatientById(@PathVariable @Valid Long id) {
 		PatientDto patientDto = patientService.getPatientById(id);
-
-		return ResponseEntity.ok(patientDto);
-	}
-
-	@PreAuthorize("hasRole('ROLE_PATIENT', 'ROLE_ADMIN')")
-	@GetMapping("/{id}")
-	public ResponseEntity<PatientDto> getPatientByIdIfSamePatient(@PathVariable @Valid Long id,
-			@PathVariable @Valid String username) {
-		PatientDto patientDto = patientService.getPatientByIdIfSamePatient(id, username);
 
 		return ResponseEntity.ok(patientDto);
 	}
@@ -60,16 +62,16 @@ public class PatientController {
 	 * @return String successfully or not successfully
 	 */
 	@PreAuthorize("hasRole('ROLE_DOCTOR', 'ROLE_ADMIN')")
-	@PostMapping("/{id}")
+	@PutMapping("/{id}/{doctorId}")
 	public ResponseEntity<String> updatePatientDetails(@PathVariable Long id,
-			@RequestBody UpdatePatientDto patientDto, @RequestParam Long doctorId) {
+			@RequestBody UpdatePatientDto patientDto, @PathVariable Long doctorId) {
 		patientService.updatePatientDetailsIfSameDoctor(id, patientDto, doctorId);
 
 		return ResponseEntity.ok("Resource updated successfully");
 	}
 
 	@PreAuthorize("hasRole('ROLE_PATIENT', 'ROLE_ADMIN')")
-	@PostMapping("/{id}")
+	@PutMapping("/{id}/{patientUserName}")
 	public ResponseEntity<String> updatePatientDetailsIfSamePatient(@PathVariable Long id,
 			@RequestBody UpdatePatientDto patientDto, @RequestParam String patientUserName) {
 		patientService.updatePatientDetailsIfSamePatient(id, patientDto, patientUserName);
@@ -98,12 +100,12 @@ public class PatientController {
 	}
 
 	@PreAuthorize("hasRole('ROLE_PATIENT', 'ROLE_ADMIN')")
-	@GetMapping("allocate/{doctorId}")
+	@GetMapping("allocate/{doctorId}/patient/{username}")
 	public ResponseEntity<String> allocatePatientToDoctorIfSamePatient(
 			@PathVariable Long doctorId, @RequestParam Long patientId,
-			@RequestParam String patientUserName) {
+			@RequestParam String username) {
 		// Logic to allocate patient to doctor
-		patientService.allocatePatientToDoctorIfSamePatient(doctorId, patientId, patientUserName);
+		patientService.allocatePatientToDoctorIfSamePatient(doctorId, patientId, username);
 
 		return ResponseEntity.ok("Patient allocated to doctor successfully");
 	}
@@ -127,9 +129,9 @@ public class PatientController {
 	}
 
 	@PreAuthorize("hasRole('ROLE_DOCTOR', 'ROLE_ADMIN', 'ROLE_PATIENT')")
-	@GetMapping("deallocate/{doctorId}")
+	@GetMapping("deallocate/{doctorId}/{patientUserName}")
 	public ResponseEntity<String> deallocatePatientFromDoctorIfSamePatient(@PathVariable Long doctorId,
-			@RequestParam Long patientId, @RequestParam String patientUserName) {
+			@RequestParam Long patientId, @PathVariable String patientUserName) {
 		patientService.deallocatePatientFromDoctorIfSamePatient(doctorId, patientId, patientUserName);
 
 		return ResponseEntity.ok("Patient deallocated from doctor successfully");
@@ -151,10 +153,10 @@ public class PatientController {
 	}
 
 	@PreAuthorize("hasRole('ROLE_PATIENT', 'ROLE_ADMIN')")
-	@DeleteMapping("/{id}")
+	@DeleteMapping("/{id}/{userName}")
 	public ResponseEntity<String> deletePatientIfSamePatient(
-			@PathVariable Long id, @RequestParam String userName) {
-		patientService.deletePatient(id);
+			@PathVariable Long id, @PathVariable String userName) {
+		patientService.deletePatient(id, userName);
 
 		return ResponseEntity.ok("Resource deleted successfully");
 	}

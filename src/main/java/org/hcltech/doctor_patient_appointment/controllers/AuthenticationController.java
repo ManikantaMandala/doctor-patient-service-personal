@@ -48,6 +48,15 @@ public class AuthenticationController {
         return ResponseEntity.created(null).body(admin);
     }
 
+    @PostMapping("/admin/login")
+    public ResponseEntity<AuthenticationResponseDto> login(
+            @RequestBody AuthenticationRequestDto authenticationRequestDto) {
+        System.out.println(authenticationRequestDto);
+        AuthenticationResponseDto responseBody = authenticationService.login(authenticationRequestDto);
+
+        return new ResponseEntity<>(responseBody, HttpStatus.OK);
+    }
+
     // doctor
     // create doctor
     @PostMapping("/doctor/signup")
@@ -64,7 +73,7 @@ public class AuthenticationController {
 
     // login doctor
     @PostMapping("/doctor/login")
-    public ResponseEntity<AuthenticationResponseDto> login(
+    public ResponseEntity<AuthenticationResponseDto> loginDoctor(
             @RequestBody AuthenticationRequestDto authenticationRequestDto) {
         System.out.println(authenticationRequestDto);
         AuthenticationResponseDto responseBody = authenticationService.login(authenticationRequestDto);
