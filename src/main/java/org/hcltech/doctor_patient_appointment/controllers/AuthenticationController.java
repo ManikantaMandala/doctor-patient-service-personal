@@ -51,16 +51,15 @@ public class AuthenticationController {
     @PostMapping("/admin/login")
     public ResponseEntity<AuthenticationResponseDto> login(
             @RequestBody AuthenticationRequestDto authenticationRequestDto) {
-        System.out.println(authenticationRequestDto);
         AuthenticationResponseDto responseBody = authenticationService.login(authenticationRequestDto);
 
-        return new ResponseEntity<>(responseBody, HttpStatus.OK);
+        return ResponseEntity.ok(responseBody);
     }
 
     // doctor
     // create doctor
     @PostMapping("/doctor/signup")
-    public ResponseEntity<DoctorDto> createDoctor(@RequestBody @Validated DoctorDto doctorDto) {
+    public ResponseEntity<DoctorDto> createDoctor(@RequestBody @Valid DoctorDto doctorDto) {
         DoctorDto createdDoctorDto = doctorService.createDoctor(doctorDto);
 
         URI location = ServletUriComponentsBuilder.fromCurrentContextPath()

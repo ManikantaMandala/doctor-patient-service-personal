@@ -6,19 +6,24 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class DoctorControllerTest {
 
-    @Test
-    void getDoctors() {
-    }
+	@Test
+	void getDoctors() {
+	}
 
-    @Test
-    void getDoctorByDoctorId() {
-    }
+	@Test
+	void getDoctorByDoctorId() {
+	}
 
-    @Test
-    void updateDoctorDetails() {
-    }
+	@Test
+	void getPatientsByDoctorId() {
 
-    @Test
-    void deleteDoctor() {
-    }
+	}
+
+	@Test
+	void updateDoctorDetails() {
+	}
+
+	@Test
+	void deleteDoctor() {
+	}
 }

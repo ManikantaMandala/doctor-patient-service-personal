@@ -21,6 +21,7 @@ public class Patient extends Users {
 	private Integer age;
 
 	@Column(nullable = false)
+	@Enumerated(value = EnumType.STRING)
 	private Gender gender;
 
 	@Column(nullable = false)
